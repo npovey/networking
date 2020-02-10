@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# ------need this script to do integration test script---------- 
+# end to end test, testing everythin
+# - clean up old test results rm -f actual.html
+# - start proxy server
+# - save pid of a proxy server 
+# - tells wget where the proxy is: export http_proxy=127.0.0.1
+# - wget [proxy settings] neverssl.com
+# - check wget results:if [$? -ne 0]; then echo FAIL; fi
+# - kill proxy server: kill $SERVER_PID
+# - diff expected.html actual.html
+# - & must have ampersand because we want proxy server run in the background
+# - otherwise ProxyServer will block and we can't ran any other commands
+# - & (fork) make server run in the background
+# - wget 
+# - cp class path
+# - bin [my class files are in bin folder] bin is a classpath
+# - navigate inside ProxyServer folder and run the script
+# (base) nps-MacBook-Air-2:ProxyServer np$ ls bin
+# ProxyServer.class	ResponseMessage.class
+# RequestMessage.class	StreamUtilities.class
+# (base) nps-MacBook-Air-2:ProxyServer np$ 
+# (base) nps-MacBook-Air-2:ProxyServer np$ chmod +x integrationTest 
+# (base) nps-MacBook-Air-2:ProxyServer np$ ./integrationTest 
+# --------------------------------------
+
+rm -f actual.html
+java -cp bin ProxyServer & 
+SERVER_PID=$!
+echo $SERVER_PID
+# nc -z 127.0.0.1 80
+# while [ $? -ne 0 ]
+# do
+# nc -z -w1 127.0.0.1 80
+# done
+sleep 1s
+export http_proxy=127.0.0.1
+wget --timeout=5 --tries=1 -O actual.html http://klzxnmsbwfchtrvd.neverssl.com/online
+if [ $? -ne 0 ]; then echo FAIL; fi
+kill $SERVER_PID
+diff expected.html actual.html
+if [ $? -ne 0 ]; then echo FAIL; fi

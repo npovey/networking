@@ -1,0 +1,19 @@
+
+# $? return code of last command
+# return code is zero if successful and non zero if we have an error
+rm -f actual.html
+java -cp bin ProxyServer & 
+chair=$!
+echo $chair
+nc -z 127.0.0.1 80
+while [ $? -ne 0 ]
+do
+nc -z -w1 127.0.0.1 80
+done
+
+export http_proxy=127.0.0.1
+wget --timeout=5 --tries=1 -O actual.html neverssl.com
+if [ $? -ne 0 ]; then echo FAIL; fi
+kill $chair
+diff expected.html actual.html
+if [ $? -ne 0 ]; then echo FAIL; fi

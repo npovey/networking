@@ -1,0 +1,2 @@
+cars:cars.com toyota.com
+books:amazon.com books.com

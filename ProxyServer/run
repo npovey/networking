@@ -1,0 +1,5 @@
+#!/bin/bash
+# builds
+javac -cp bin -d bin -sourcepath src src/*
+# runs a ProxyServer
+java -cp bin ProxyServer 

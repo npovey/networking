@@ -1,0 +1,15 @@
+rm -f actual.html
+java -cp bin ProxyServer & 
+SERVER_PID=$!
+echo $SERVER_PID
+
+# wait for the connection/port to open
+# waiting for proxy server to start
+sleep 1s 
+export http_proxy=127.0.0.1
+wget --timeout=5 --tries=1 -O actual.html http://klzxnmsbwfchtrvd.neverssl.com/online
+# ne - not equal
+if [ $? -ne 0 ]; then echo FAIL; fi
+kill $SERVER_PID
+diff expected.html actual.html
+if [ $? -ne 0 ]; then echo FAIL; fi
